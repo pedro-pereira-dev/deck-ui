@@ -43,9 +43,24 @@
               runHook preInstall
               mkdir -p $out/bin $out/share
               cp -r * $out/share
-              ags bundle app.tsx $out/bin/deck-ui -d "SRC='$out/share'"
+              ags bundle app.tsx "$out/bin/$name" -d "SRC='$out/share'"
               runHook postInstall
             '';
+          };
+        }
+      );
+
+      devShells = forAllSystems (
+        system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+        in
+        {
+          default = pkgs.mkShell {
+            packages = [
+              ags.packages.${system}.default
+              pkgs.watchexec
+            ];
           };
         }
       );
