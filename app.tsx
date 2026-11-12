@@ -5,34 +5,41 @@ import { Main, Styles } from "./src";
 app.start({
   css: `
     ${Styles}
-
-    window {
+    .app__window {
       background-color: black;
+    }
+    .app__window__content {
+      background-color: lightblack;
+      border: solid .1rem white;
+      margin: 4rem;
     }
   `,
   instanceName: "deck-ui",
   main() {
     return (
       <window
-        $={(self) => {
-          self.connect("map", () => {
-            self.present();
-          });
-        }}
+        $={(self) => self.connect("map", self.present)}
         anchor={
-          Astal.WindowAnchor.TOP |
           Astal.WindowAnchor.BOTTOM |
           Astal.WindowAnchor.LEFT |
-          Astal.WindowAnchor.RIGHT
+          Astal.WindowAnchor.RIGHT |
+          Astal.WindowAnchor.TOP
         }
         application={app}
+        class="app__window"
         keymode={Astal.Keymode.ON_DEMAND}
-        title="Hello, world!"
         visible
       >
-        <box hexpand vexpand>
-          <Main />
-        </box>
+        <overlay hexpand vexpand>
+          <box
+            $type="overlay"
+            class="app__window__content"
+            halign="center"
+            valign="center"
+          >
+            <Main />
+          </box>
+        </overlay>
       </window>
     );
   },

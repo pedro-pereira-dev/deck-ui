@@ -6,6 +6,11 @@ export function Main() {
       <label label="First item" />
       <label label="Second item" />
       <label label="Third item" />
+      <label label="Third item" />
+      <label label="Third item" />
+      <label label="Third item" />
+      <label label="Third item" />
+      <label label="Third item" />
     </List>
   );
 }
