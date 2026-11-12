@@ -12,6 +12,7 @@
     }:
     let
       fontFamily = "Maple Mono NF";
+      backgroundImage = "assets/generated-pixel-art.jpg";
       forAllSystems = nixpkgs.lib.genAttrs systems;
       systems = [
         "aarch64-linux"
@@ -44,7 +45,9 @@
               runHook preInstall
               mkdir -p $out/bin $out/share
               cp -r * $out/share
-              ags bundle app.tsx "$out/bin/$name" -d "FONT_FAMILY='${fontFamily}'" -d "SRC='$out/share'"
+              ags bundle app.tsx "$out/bin/$name" \
+                -d "FONT_FAMILY='${fontFamily}'" \
+                -d "BACKGROUND_IMAGE='$out/share/${backgroundImage}'"
               runHook postInstall
             '';
           };
@@ -56,7 +59,11 @@
         let
           pkgs = nixpkgs.legacyPackages.${system};
           agsWithFont = pkgs.writeShellScriptBin "ags-with-font" ''
-            exec ${ags.packages.${system}.default}/bin/ags run --define "FONT_FAMILY='${fontFamily}'" "$@"
+            background_image="''${BACKGROUND_IMAGE:-${toString ./.}/${backgroundImage}}"
+            exec ${ags.packages.${system}.default}/bin/ags run \
+              --define "FONT_FAMILY='${fontFamily}'" \
+              --define "BACKGROUND_IMAGE='$background_image'" \
+              "$@"
           '';
         in
         {

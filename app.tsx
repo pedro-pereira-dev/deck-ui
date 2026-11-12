@@ -7,6 +7,10 @@ app.start({
     ${Styles}
     .app__window {
       background-color: black;
+      background-image: url("file://${BACKGROUND_IMAGE}");
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
       font-family: "${FONT_FAMILY}";
     }
     .app__window__content {
