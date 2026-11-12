@@ -1,6 +1,3 @@
-import { getStyles } from "./utils";
-
 export * from "./components";
+export * from "./utils";
 export * from "./views";
-
-export const Styles = getStyles();

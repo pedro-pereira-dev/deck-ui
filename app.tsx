@@ -1,22 +1,23 @@
+import Gtk from "gi://Gtk?version=4.0";
 import app from "ags/gtk4/app";
 import { Astal } from "ags/gtk4";
-import { Main, Styles } from "./src";
+import { Main, getStyles } from "./src";
 
 app.start({
   css: `
-    ${Styles}
+    ${getStyles()}
     .app__window {
       background-color: black;
       background-image: url("file://${BACKGROUND_IMAGE}");
       background-position: center;
       background-repeat: no-repeat;
       background-size: cover;
+      color: black;
       font-family: "${FONT_FAMILY}";
     }
     .app__window__content {
-      background-color: lightblack;
-      border: solid .1rem white;
-      margin: 4rem;
+      margin: 4rem 12rem;
+      border: 4px solid red;
     }
   `,
   instanceName: "deck-ui",
@@ -35,16 +36,9 @@ app.start({
         keymode={Astal.Keymode.ON_DEMAND}
         visible
       >
-        <overlay hexpand vexpand>
-          <box
-            $type="overlay"
-            class="app__window__content"
-            halign="center"
-            valign="center"
-          >
-            <Main />
-          </box>
-        </overlay>
+        <box class="app__window__content">
+          <Main />
+        </box>
       </window>
     );
   },
