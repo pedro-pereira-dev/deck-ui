@@ -1,7 +1,9 @@
+import GLib from "gi://GLib?version=2.0";
 import Gtk from "gi://Gtk?version=4.0";
 import { registerStyle } from "../utils";
 
 export function List({ children }: { children: JSX.Element | JSX.Element[] }) {
+  const rows = Array.isArray(children) ? children : [children];
   const onKeynavFailed = (self: Gtk.ListBox, direction: Gtk.DirectionType) => {
     const row =
       direction === Gtk.DirectionType.UP
@@ -19,12 +21,29 @@ export function List({ children }: { children: JSX.Element | JSX.Element[] }) {
 
   return (
     <Gtk.ListBox
-      class="boxed-list deck-list"
+      class="deck-list"
       focusable
       selectionMode={Gtk.SelectionMode.SINGLE}
-      $={(self) => self.connect("keynav-failed", onKeynavFailed)}
+      $={(self) => {
+        self.connect("keynav-failed", onKeynavFailed);
+        self.connect("map", () => {
+          GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE, () => {
+            const firstRow = self.get_row_at_index(0);
+            if (!firstRow) return GLib.SOURCE_REMOVE;
+
+            self.select_row(firstRow);
+            self.grab_focus();
+            firstRow.grab_focus();
+            return GLib.SOURCE_REMOVE;
+          });
+        });
+      }}
     >
-      {children}
+      {rows.map((child) => (
+        <Gtk.ListBoxRow class="deck-list__item" focusable>
+          {child}
+        </Gtk.ListBoxRow>
+      ))}
     </Gtk.ListBox>
   );
 }
@@ -32,22 +51,23 @@ export function List({ children }: { children: JSX.Element | JSX.Element[] }) {
 registerStyle(
   "list",
   `
-    list.deck-list {
+    .deck-list {
       background-color: #1e1e2e;
       border: 1px solid #45475a;
       border-radius: 8px;
       color: #cdd6f4;
     }
 
-    list.deck-list row label {
+    .deck-list__item label {
       padding: 10px 12px;
     }
 
-    list.deck-list row:hover {
+    .deck-list__item:hover {
       background-color: #313244;
     }
 
-    list.deck-list row:selected {
+    .deck-list row:focus,
+    .deck-list row:selected {
       background-color: #45475a;
       color: #ffffff;
     }
