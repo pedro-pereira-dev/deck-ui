@@ -1,9 +1,10 @@
 import app from "ags/gtk4/app";
-import { Router } from "./src";
+import { Main, Styles } from "./src";
 
 app.start({
+  css: Styles,
   instanceName: "deck-ui",
   main() {
-    return <Router application={app} />;
+    return <Main application={app} />;
   },
 });
