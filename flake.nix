@@ -11,6 +11,7 @@
       ...
     }:
     let
+      fontFamily = "Maple Mono NF";
       forAllSystems = nixpkgs.lib.genAttrs systems;
       systems = [
         "aarch64-linux"
@@ -43,7 +44,7 @@
               runHook preInstall
               mkdir -p $out/bin $out/share
               cp -r * $out/share
-              ags bundle app.tsx "$out/bin/$name" -d "SRC='$out/share'"
+              ags bundle app.tsx "$out/bin/$name" -d "FONT_FAMILY='${fontFamily}'" -d "SRC='$out/share'"
               runHook postInstall
             '';
           };
@@ -54,11 +55,16 @@
         system:
         let
           pkgs = nixpkgs.legacyPackages.${system};
+          agsWithFont = pkgs.writeShellScriptBin "ags-with-font" ''
+            exec ${ags.packages.${system}.default}/bin/ags run --define "FONT_FAMILY='${fontFamily}'" "$@"
+          '';
         in
         {
           default = pkgs.mkShell {
             packages = [
               ags.packages.${system}.default
+              agsWithFont
+              pkgs.maple-mono.NF
               pkgs.watchexec
             ];
           };

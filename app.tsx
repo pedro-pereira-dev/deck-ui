@@ -7,6 +7,7 @@ app.start({
     ${Styles}
     .app__window {
       background-color: black;
+      font-family: "${FONT_FAMILY}";
     }
     .app__window__content {
       background-color: lightblack;
